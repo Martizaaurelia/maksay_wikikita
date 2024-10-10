@@ -1,1 +1,0 @@
-# maksay_wikikita
