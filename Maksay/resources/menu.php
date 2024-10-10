@@ -221,7 +221,8 @@ include('view/templates/header.php');
                                                                 </div>
                                                                 <div class="row mb-3">
                                                                     <label for="description"
-                                                                        class="col-sm-2 col-form-label">Description</label>
+                                                                        class="col-sm-2 col-form-label">Description <span
+                                                                        class="mandatory-icon">*</span></label>
                                                                     <div class="col-sm-10">
                                                                         <textarea class="form-control" id="description"
                                                                             name="description"><?php echo htmlspecialchars($row['description']); ?></textarea>
@@ -229,7 +230,8 @@ include('view/templates/header.php');
                                                                 </div>
                                                                 <div class="row mb-3">
                                                                     <label for="image"
-                                                                        class="col-sm-2 col-form-label">Image</label>
+                                                                        class="col-sm-2 col-form-label">Image <span
+                                                                        class="mandatory-icon">*</span></label>
                                                                     <div class="col-sm-10">
                                                                         <input type="file" class="form-control" id="image"
                                                                             name="image">
@@ -237,15 +239,15 @@ include('view/templates/header.php');
                                                                 </div>
                                                                 <?php
                                                                 // Fetch the current user id and full name from the session
-                                                                $current_user_id = $_SESSION['id_login'];  // Assuming this is stored when the user logs in
-                                                                $current_user_name = $_SESSION['nama_lengkap'];  // Full name stored in session
+                                                                // $current_user_id = $_SESSION['id_login'];  // Assuming this is stored when the user logs in
+                                                                // $current_user_name = $_SESSION['nama_lengkap'];  // Full name stored in session
                                                                 ?>
 
                                                                 <div class="row mb-3">
                                                                     <label for="id_login"
-                                                                        class="col-sm-4 col-form-label">Modified By <span
+                                                                        class="col-sm-2 col-form-label">Modified By <span
                                                                             class="mandatory-icon">*</span></label>
-                                                                    <div class="col-sm-8">
+                                                                    <div class="col-sm-10">
                                                                         <!-- Automatically select the current logged-in user -->
                                                                         <select id="id_login" class="form-select"
                                                                             name="id_login" readonly>
@@ -271,14 +273,44 @@ include('view/templates/header.php');
                                                 </div>
                                             </div>
                                             <a class="dbi bi-trash"
-                                                href="deletemenu.php?id_menu=<?php echo $row['id_menu']; ?>"
-                                                onclick="return confirm('Are you sure you want to delete this user?');"></a>
+                                                href="view/backend/deletemenu.php?id_menu=<?php echo $row['id_menu']; ?>"
+                                                onclick="return confirm('Are you sure you want to delete this user?');">
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
                         </table>
                         <!-- End Table with stripped rows -->
+
+                        <script>
+                            // Event listener for search bar
+                            document.getElementById('search').addEventListener('keyup', function() {
+                                let input = this.value.toLowerCase();
+                                let rows = document.querySelectorAll('table tbody tr'); // Correctly target the rows in the table body
+
+                                rows.forEach(row => {
+                                    let cells = row.getElementsByTagName('td');
+                                    let found = false;
+
+                                    for (let i = 0; i < cells.length; i++) {
+                                        if (cells[i].textContent.toLowerCase().includes(input)) {
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+
+                                    row.style.display = found ? '' : 'none'; // Show or hide the row based on search
+                                });
+                            });
+
+                            // Change entries per page
+                            document.getElementById('entries_per_page').addEventListener('change', function() {
+                                const entries = this.value;
+                                window.location.href = `?entries_per_page=${entries}&page=1`; // Redirect to update entries per page
+                            });
+                        </script>
+
 
                         <!-- Pagination -->
                         <nav aria-label="Page navigation">
@@ -306,33 +338,6 @@ include('view/templates/header.php');
                             </ul>
                         </nav>
 
-                        <script>
-                            // Event listener for search bar
-                            document.getElementById('search').addEventListener('keyup', function() {
-                                let input = this.value.toLowerCase();
-                                let rows = document.querySelectorAll('#roleTableBody tr');
-
-                                rows.forEach(row => {
-                                    let cells = row.getElementsByTagName('td');
-                                    let found = false;
-
-                                    for (let i = 0; i < cells.length; i++) {
-                                        if (cells[i].textContent.toLowerCase().includes(input)) {
-                                            found = true;
-                                            break;
-                                        }
-                                    }
-
-                                    row.style.display = found ? '' : 'none';
-                                });
-                            });
-
-                            // Change entries per page
-                            document.getElementById('entries_per_page').addEventListener('change', function() {
-                                const entries = this.value;
-                                window.location.href = `?entries_per_page=${entries}&page=1`;
-                            });
-                        </script>
                     </div>
                 </div>
             </div>

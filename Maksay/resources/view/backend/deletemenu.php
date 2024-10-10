@@ -7,7 +7,7 @@ if (isset($_GET['id_menu'])) {
     $id_menu = $_GET['id_menu'];
 
     // Get the current user's id_login from the session
-    $id_login = $_SESSION['id_login'];
+    // $id_login = $_SESSION['id_login'];
 
     // Optional: Log the deletion with the current user's id_login (logging the action)
     // You could store this in a log table if needed
@@ -22,10 +22,10 @@ if (isset($_GET['id_menu'])) {
     if (!$hasil_query) {
         die("Gagal menghapus data: " . mysqli_errno($koneksi) . " - " . mysqli_error($koneksi));
     } else {
-        echo "<script>alert('Data was successfully deleted.'); window.location='menu.php';</script>";
+        echo "<script>alert('Data was successfully deleted.'); window.location='../../menu.php';</script>";
     }
 } else {
-    echo "<script>alert('No menu ID specified.'); window.location='menu.php';</script>";
+    echo "<script>alert('No menu ID specified.'); window.location='../../menu.php';</script>";
 }
 
 // Close the database connection
