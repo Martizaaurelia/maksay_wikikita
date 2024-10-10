@@ -101,7 +101,7 @@ $total_pages = ceil($total_rows / $entries_per_page);
                             <tbody id="roleTableBody">
                                 <?php
                                 // Fetch roles data
-                                $data = mysqli_query($koneksi, "SELECT * FROM role ORDER BY id_role DESC LIMIT $offset, $entries_per_page");
+                                $data = mysqli_query($koneksi, "SELECT * FROM role ORDER BY id_role ASC LIMIT $offset, $entries_per_page");
                                 $nomor = $offset + 1;
                                 while ($row = mysqli_fetch_array($data)) { ?>
                                     <tr>

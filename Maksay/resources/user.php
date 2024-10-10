@@ -141,7 +141,7 @@ $total_pages = ceil($total_rows / $entries_per_page);
                             <tbody id="userTableBody">
                                 <?php
                                 // Fetch limited results based on pagination
-                                $data = mysqli_query($koneksi, "SELECT * FROM login JOIN role ON login.id_role=role.id_role ORDER BY id_login DESC LIMIT $offset, $entries_per_page");
+                                $data = mysqli_query($koneksi, "SELECT * FROM login JOIN role ON login.id_role=role.id_role ORDER BY id_login ASC LIMIT $offset, $entries_per_page");
 
                                 $nomor = $offset + 1; // Start numbering from the offset + 1
                                 while ($row = mysqli_fetch_array($data)) { ?>

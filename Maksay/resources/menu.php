@@ -65,13 +65,24 @@ include('view/templates/header.php');
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label for="menu_description" class="col-sm-2 col-form-label">Description <span
-                                        class="mandatory-icon">*</span></label>
+                                <label for="menu_description" class="col-sm-2 col-form-label">Description <span class="mandatory-icon">*</span></label>
                                 <div class="col-sm-10">
                                     <div class="quill-editor-full" id="editor"></div>
-                                    <input type="hidden" name="menu_description" value="" /><br>
+                                    <input type="hidden" id="menu_description" name="menu_description" /><br>
                                 </div>
                             </div>
+                            <script>
+                                // Initialize Quill editor
+                                var quill = new Quill('#editor', {
+                                    theme: 'snow'
+                                });
+
+                                // On form submit, update the hidden input with the Quill editor content
+                                document.querySelector('form').onsubmit = function() {
+                                    var description = document.querySelector('input[name=menu_description]');
+                                    description.value = quill.root.innerHTML; // Set Quill editor content to hidden input
+                                };
+                            </script>
                         </div>
                         <div class="modal-footer">
                             <button type="reset" class="btn btn-danger">Reset</button>
@@ -273,7 +284,7 @@ include('view/templates/header.php');
                         <nav aria-label="Page navigation">
                             <ul class="pagination">
                                 <li class="page-item <?php if ($current_page == 1)
-                                    echo 'disabled'; ?>">
+                                                            echo 'disabled'; ?>">
                                     <a class="page-link"
                                         href="?page=<?php echo max(1, $current_page - 1); ?>&entries_per_page=<?php echo $entries_per_page; ?>">Previous</a>
                                 </li>
@@ -288,7 +299,7 @@ include('view/templates/header.php');
                                 <?php } ?>
 
                                 <li class="page-item <?php if ($current_page == $total_pages)
-                                    echo 'disabled'; ?>">
+                                                            echo 'disabled'; ?>">
                                     <a class="page-link"
                                         href="?page=<?php echo min($total_pages, $current_page + 1); ?>&entries_per_page=<?php echo $entries_per_page; ?>">Next</a>
                                 </li>
@@ -297,7 +308,7 @@ include('view/templates/header.php');
 
                         <script>
                             // Event listener for search bar
-                            document.getElementById('search').addEventListener('keyup', function () {
+                            document.getElementById('search').addEventListener('keyup', function() {
                                 let input = this.value.toLowerCase();
                                 let rows = document.querySelectorAll('#roleTableBody tr');
 
@@ -317,7 +328,7 @@ include('view/templates/header.php');
                             });
 
                             // Change entries per page
-                            document.getElementById('entries_per_page').addEventListener('change', function () {
+                            document.getElementById('entries_per_page').addEventListener('change', function() {
                                 const entries = this.value;
                                 window.location.href = `?entries_per_page=${entries}&page=1`;
                             });
