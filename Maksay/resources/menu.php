@@ -11,7 +11,8 @@
         /* Adjust the height of the Quill editor */
     }
 </style>
-
+<script type="text/javascript" src="../bootstrap/ckeditor5/ckeditor5.js"></script>
+       
 <?php
 // include properti
 include('view/templates/header.php');
@@ -30,70 +31,105 @@ include('view/templates/header.php');
         </nav>
     </div><!-- End Page Title -->
 
-    <!-- Isi Tambah -->
-    <div class="card-body larger-card-body">
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <form action="view/backend/addmenu.php" method="post" enctype="multipart/form-data">
-                <div class="modal-dialog modal-lg"> <!-- Use 'modal-lg' for larger modal -->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Add Menu</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Isi Tambah -->
+<div class="card-body larger-card-body">
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <form id="addMenuForm" action="view/backend/addmenu.php" method="post" enctype="multipart/form-data">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Menu</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body modal-body-scrollable">
+                        <div class="row mb-3">
+                            <label for="menu_code" class="col-sm-2 col-form-label">Menu Code <span class="mandatory-icon">*</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="menu_code" name="menu_code" required>
+                            </div>
                         </div>
-                        <div class="modal-body modal-body-scrollable"> <!-- Add custom class here -->
-                            <!-- Horizontal Form -->
-                            <div class="row mb-3">
-                                <label for="menu_code" class="col-sm-2 col-form-label">Menu Code <span
-                                        class="mandatory-icon">*</span></label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="menu_code" name="menu_code" required>
-                                </div>
+                        <div class="row mb-3">
+                            <label for="menu_name" class="col-sm-2 col-form-label">Menu Name <span class="mandatory-icon">*</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="menu_name" name="menu_name" required>
                             </div>
-                            <div class="row mb-3">
-                                <label for="menu_name" class="col-sm-2 col-form-label">Menu Name <span
-                                        class="mandatory-icon">*</span></label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="menu_name" name="menu_name" required>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label for="menu_image" class="col-sm-2 col-form-label">Image <span
-                                        class="mandatory-icon">*</span></label>
-                                <div class="col-sm-10">
-                                    <input type="file" class="form-control" id="menu_image" name="menu_image" required>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label for="menu_description" class="col-sm-2 col-form-label">Description <span class="mandatory-icon">*</span></label>
-                                <div class="col-sm-10">
-                                    <div class="quill-editor-full" id="editor"></div>
-                                    <input type="hidden" id="menu_description" name="menu_description" /><br>
-                                </div>
-                            </div>
-                            <script>
-                                // Initialize Quill editor
-                                var quill = new Quill('#editor', {
-                                    theme: 'snow'
-                                });
-
-                                // On form submit, update the hidden input with the Quill editor content
-                                document.querySelector('form').onsubmit = function() {
-                                    var description = document.querySelector('input[name=menu_description]');
-                                    description.value = quill.root.innerHTML; // Set Quill editor content to hidden input
-                                };
-                            </script>
                         </div>
+                        <div class="row mb-3">
+                            <label for="menu_image" class="col-sm-2 col-form-label">Image <span class="mandatory-icon">*</span></label>
+                            <div class="col-sm-10">
+                                <input type="file" class="form-control" id="menu_image" name="menu_image" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="menu_description" class="col-sm-2 col-form-label">Description <span class="mandatory-icon">*</span></label>
+                            <div class="col-sm-10">
+                                <!-- Quill Editor Container -->
+                                <div id="menu_description"></div>
+                            </div>
+                        </div>
+                        <br>
                         <div class="modal-footer">
                             <button type="reset" class="btn btn-danger">Reset</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" value="simpan">Save changes</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
+</div>
+
+<!-- Include Quill stylesheet and JS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    // Initialize Quill editor
+    let quill;
+    let isQuillInitialized = false; // Flag to check if Quill is initialized
+    var myModalEl = document.getElementById('exampleModal');
+
+    myModalEl.addEventListener('shown.bs.modal', function () {
+        // Initialize Quill only if it hasn't been initialized yet
+        if (!isQuillInitialized) {
+            quill = new Quill('#menu_description', {
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic'],
+                        ['link', 'blockquote', 'code-block', 'image'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                    ],
+                },
+                theme: 'snow',
+            });
+            isQuillInitialized = true; // Set the flag to true after initialization
+        }
+    });
+
+    // Handle form submission
+    document.getElementById('addMenuForm').addEventListener('submit', function (e) {
+        // Prevent default form submission if you want to handle it differently
+        e.preventDefault();
+
+        // Get the content from the Quill editor
+        const description = quill.root.innerHTML;
+
+        // Set up the hidden input for the form submission
+        const descriptionInput = document.createElement('input');
+        descriptionInput.type = 'hidden';
+        descriptionInput.name = 'menu_description';
+        descriptionInput.value = description;
+
+        // Append the hidden input to the form
+        this.appendChild(descriptionInput);
+
+        // Now submit the form
+        this.submit(); // Uncomment this line to submit the form normally
+    });
+</script>
+
 
     <!-- Akhir -->
     <section class="section">
@@ -158,128 +194,102 @@ include('view/templates/header.php');
                                 $total_pages = ceil($total_rows / $entries_per_page);
 
                                 // Fetch menu data with pagination
-                                $data = mysqli_query($koneksi, "SELECT menu.*, login.nama_lengkap FROM menu LEFT JOIN login ON menu.modified_by = login.id_login ORDER BY id_menu ASC LIMIT $offset, $entries_per_page");
+                                $data = mysqli_query($koneksi, "SELECT menu.*, login.nama_lengkap FROM menu LEFT JOIN login ON menu.modified_by = login.id_login ORDER BY timestamp DESC LIMIT $offset, $entries_per_page");
 
                                 $nomor = $offset + 1; // To display the correct number
                                 while ($row = mysqli_fetch_array($data)) { ?>
                                     <tr>
-                                        <td><?php echo $nomor++; ?></td>
-                                        <td><?php echo htmlspecialchars($row['menu_code']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['menu_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['menu_description']); ?></td>
-                                        <td><img src="<?php echo htmlspecialchars($row['menu_image']); ?>"
-                                                alt="<?php echo htmlspecialchars($row['menu_name']); ?>"
-                                                style="width: 50px; height: auto;"></td>
-                                        <td><?php echo htmlspecialchars($row['nama_lengkap']); ?></td>
-                                        <!-- Display full name -->
-                                        <td data-type="date" data-format="MM/DD/YYYY">
-                                            <?php echo htmlspecialchars($row['timestamp']); ?>
-                                        </td>
-                                        <td>
-                                            <!-- Edit Menu -->
-                                            <i class="bi bi-pencil" data-bs-toggle="modal"
-                                                data-bs-target="#editModal_<?php echo $row['id_menu']; ?>"></i>
+            <td><?php echo $nomor++; ?></td>
+            <td><?php echo htmlspecialchars($row['menu_code']); ?></td>
+            <td><?php echo htmlspecialchars($row['menu_name']); ?></td>
+            <td>
+                <?php
+                // Process description and output
+                $descriptionHtml = '<p>' . htmlspecialchars($row['menu_description']) . '</p>';
+                $dom = new DOMDocument();
+                libxml_use_internal_errors(true); // Suppress warnings from malformed HTML
+                $dom->loadHTML($descriptionHtml);
+                libxml_clear_errors();
 
-                                            <!-- Modal for each menu -->
-                                            <div class="modal fade" id="editModal_<?php echo $row['id_menu']; ?>"
-                                                tabindex="-1"
-                                                aria-labelledby="editModalLabel_<?php echo $row['id_menu']; ?>"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title"
-                                                                id="editModalLabel_<?php echo $row['id_menu']; ?>">Edit Menu
-                                                            </h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <form action="view/backend/editmenu.php" method="post"
-                                                            enctype="multipart/form-data">
-                                                            <div class="modal-body">
-                                                                <div class="row mb-3">
-                                                                    <label for="menu_code"
-                                                                        class="col-sm-2 col-form-label">Menu Code <span
-                                                                            class="mandatory-icon">*</span></label>
-                                                                    <div class="col-sm-10">
-                                                                        <input type="text" class="form-control"
-                                                                            id="menu_code" name="menu_code"
-                                                                            value="<?php echo htmlspecialchars($row['menu_code']); ?>"
-                                                                            required>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <label for="menu_name"
-                                                                        class="col-sm-2 col-form-label">Menu Name <span
-                                                                            class="mandatory-icon">*</span></label>
-                                                                    <div class="col-sm-10">
-                                                                        <input type="text" class="form-control"
-                                                                            id="menu_name" name="menu_name"
-                                                                            value="<?php echo htmlspecialchars($row['menu_name']); ?>"
-                                                                            required>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <label for="description"
-                                                                        class="col-sm-2 col-form-label">Description <span
-                                                                        class="mandatory-icon">*</span></label>
-                                                                    <div class="col-sm-10">
-                                                                        <textarea class="form-control" id="description"
-                                                                            name="description"><?php echo htmlspecialchars($row['description']); ?></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <label for="image"
-                                                                        class="col-sm-2 col-form-label">Image <span
-                                                                        class="mandatory-icon">*</span></label>
-                                                                    <div class="col-sm-10">
-                                                                        <input type="file" class="form-control" id="image"
-                                                                            name="image">
-                                                                    </div>
-                                                                </div>
-                                                                <?php
-                                                                // Fetch the current user id and full name from the session
-                                                                // $current_user_id = $_SESSION['id_login'];  // Assuming this is stored when the user logs in
-                                                                // $current_user_name = $_SESSION['nama_lengkap'];  // Full name stored in session
-                                                                ?>
+                $text = '';
+                foreach ($dom->getElementsByTagName('p') as $p) {
+                    $content = trim($p->textContent);
+                    if (!empty($content)) {
+                        $text .= $content . ' ';
+                    }
+                }
+                echo trim($text);
+                ?>
+            </td>
+            <td>
+                <img src="../bootstrap/assets/img/menu/<?php echo htmlspecialchars($row['menu_image']); ?>"
+                     alt="<?php echo htmlspecialchars($row['menu_name']); ?>"
+                     style="width: 50px; height: auto;">
+            </td>
+            
+            <td><?php echo htmlspecialchars($row['nama_lengkap']); ?></td>
+            <td data-type="date" data-format="MM/DD/YYYY">
+                <?php echo htmlspecialchars($row['timestamp']); // Ensure $timestamp is defined ?>
+            </td>
+            <td>
+                <!-- Edit Menu -->
+                <i class="bi bi-pencil" data-bs-toggle="modal" data-bs-target="#editModal_<?php echo $row['id_menu']; ?>"></i>
 
-                                                                <div class="row mb-3">
-                                                                    <label for="id_login"
-                                                                        class="col-sm-2 col-form-label">Modified By <span
-                                                                            class="mandatory-icon">*</span></label>
-                                                                    <div class="col-sm-10">
-                                                                        <!-- Automatically select the current logged-in user -->
-                                                                        <select id="id_login" class="form-select"
-                                                                            name="id_login" readonly>
-                                                                            <option value="<?php echo $nama_lengkap; ?>">
-                                                                                <?php echo htmlspecialchars($nama_lengkap); ?>
-                                                                            </option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-
-                                                                <input name="id_menu" value="<?php echo $row['id_menu']; ?>"
-                                                                    hidden />
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="reset" class="btn btn-danger">Reset</button>
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-primary"
-                                                                    value="simpan">Save changes</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <a class="dbi bi-trash"
-                                                href="view/backend/deletemenu.php?id_menu=<?php echo $row['id_menu']; ?>"
-                                                onclick="return confirm('Are you sure you want to delete this user?');">
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <?php } ?>
-                            </tbody>
+                <!-- Modal for each menu -->
+                <div class="modal fade" id="editModal_<?php echo $row['id_menu']; ?>" tabindex="-1" aria-labelledby="editModalLabel_<?php echo $row['id_menu']; ?>" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalLabel_<?php echo $row['id_menu']; ?>">Edit Menu</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="view/backend/editmenu.php" method="post" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="menu_code" class="form-label">Menu Code <span class="mandatory-icon">*</span></label>
+                                        <input type="text" class="form-control" id="menu_code" name="menu_code" value="<?php echo htmlspecialchars($row['menu_code']); ?>" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="menu_name" class="form-label">Menu Name <span class="mandatory-icon">*</span></label>
+                                        <input type="text" class="form-control" id="menu_name" name="menu_name" value="<?php echo htmlspecialchars($row['menu_name']); ?>" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" name="description"><?php echo htmlspecialchars($row['menu_description']); ?></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="image" class="form-label">Image</label>
+                                        <input type="file" class="form-control" id="image" name="image">
+                                    </div>
+                                    <?php
+                                    // Fetch the current user id and full name from the session
+                                    $current_user_id = $_SESSION['id_login'] ?? '';  // Assuming this is stored when the user logs in
+                                    $current_user_name = $_SESSION['nama_lengkap'] ?? '';  // Full name stored in session
+                                    ?>
+                                    <div class="mb-3">
+                                        <label for="id_login" class="form-label">Modified By <span class="mandatory-icon">*</span></label>
+                                        <select id="id_login" class="form-select" name="id_login" readonly>
+                                            <option value="<?php echo $current_user_id; ?>">
+                                                <?php echo htmlspecialchars($current_user_name); ?>
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <input type="hidden" name="id_menu" value="<?php echo $row['id_menu']; ?>" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="reset" class="btn btn-danger">Reset</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <a class="dbi bi-trash" href="deletemenu.php?id_menu=<?php echo $row['id_menu']; ?>" onclick="return confirm('Are you sure you want to delete this menu?');"></a>
+            </td>
+        </tr>
+    <?php } ?>
+</tbody>
                         </table>
                         <!-- End Table with stripped rows -->
 
